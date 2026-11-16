@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b0813">
+<title>GiftOops · Telegram вход</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 25%,#332052,#0b0813 62%);color:#fff;min-height:100dvh;padding:25px;display:grid;place-items:center}.shell{width:min(420px,100%);text-align:center}.mark{width:90px;height:90px;margin:0 auto 22px;border-radius:26px;display:grid;place-items:center;background:linear-gradient(135deg,#ba8bff,#5823ae);box-shadow:0 15px 50px #7843ce55;font-size:42px}h1{font-size:34px;letter-spacing:-1.8px;margin:0}h1 span{color:#be92ff}.sub{font-size:12px;letter-spacing:1.2px;color:#afa0c8;margin:7px 0 36px}.box{padding:22px;border:1px solid #463657;background:#1c152a;border-radius:20px;text-align:left}.line{display:flex;align-items:center;gap:12px}.avatar{width:48px;height:48px;display:grid;place-items:center;background:#40285d;border-radius:50%;font-size:24px}.name{font-size:17px;font-weight:700;overflow-wrap:anywhere}.muted{font-size:13px;color:#a99abe;margin-top:4px}.pill{display:inline-flex;padding:6px 10px;border-radius:20px;margin-top:15px;background:#322541;color:#ddc5ff;font-size:12px}p{line-height:1.55}.status{margin:22px 0;color:#baa8cf;font-size:14px}.bar{height:5px;background:#332741;border-radius:12px;overflow:hidden}.bar div{height:100%;background:#ae79ff;width:0;transition:width .65s ease}.actions{margin-top:20px;display:grid;gap:10px}button,a.button{border:0;min-height:46px;border-radius:14px;background:#9567ed;color:white;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;display:grid;place-items:center}.secondary{background:#342544!important}.warn{color:#e8c4a6;font-size:12px;text-align:left;margin:13px 0 0}.small{margin-top:28px;color:#81708f;font-size:11px}.hidden{display:none!important}
+</style>
+</head>
+<body><main class="shell"><div class="mark">🎁</div><h1>GIFT<span>OOPS</span></h1><div class="sub">ALPHA 0.0.1 · TELEGRAM AUTH TEST</div>
+<section class="box"><div class="line"><div class="avatar">👤</div><div><div class="name" id="name">Проверяем Telegram…</div><div class="muted" id="handle">Ожидание данных</div></div></div><div id="badge" class="pill">Проверка подключения</div></section>
+<div class="status" id="status" role="status">Запускаем Telegram WebApp…</div><div class="bar"><div id="bar"></div></div>
+<div class="actions"><button id="recheck" type="button" class="secondary">Проверить ещё раз</button><a class="button hidden" id="old" href="http://m1.nexuz.ru:25569/" rel="noreferrer">Открыть старую HTTP-версию</a></div><p class="warn" id="warning"></p><div class="small">Ни токены, ни данные Telegram не передаются на GitHub или на HTTP-сайт этим тестом.</div></main>
+<script>
+const el=id=>document.getElementById(id), tg=window.Telegram?.WebApp;
+function check(){
+ el('bar').style.width='35%';el('old').classList.add('hidden');
+ if(!tg){el('name').textContent='Telegram SDK недоступен';el('handle').textContent='Открой через кнопку Mini App';el('badge').textContent='Нет Telegram';el('status').textContent='Не удалось загрузить Telegram WebApp';el('warning').textContent='Это диагностический экран. База данных не подключена.';return;}
+ try{tg.ready();tg.expand();tg.setHeaderColor('#0b0813');tg.setBackgroundColor('#0b0813')}catch(e){}
+ const u=tg.initDataUnsafe?.user, data=tg.initData;
+ if(u && typeof data==='string' && data.length>0){
+ const name=[u.first_name,u.last_name].filter(Boolean).join(' ').slice(0,100);
+ el('name').textContent=name||'Игрок Telegram';el('handle').textContent=u.username?'@'+u.username:'Пользователь Telegram';
+ el('badge').textContent='✓ Данные Telegram получены';el('bar').style.width='100%';
+ el('status').textContent='Первый этап пройден: Telegram передал данные Mini App';
+ el('warning').textContent='Это ещё НЕ серверная авторизация: данные должны проверяться по подписи на HTTPS-сервере. GitHub Pages не работает с PHP/MySQL, а переход на HTTP теряет защищённый контекст.';
+ } else {
+ el('name').textContent='Данные входа не получены';el('handle').textContent='Нужен запуск через кнопку Mini App';el('badge').textContent='Тест не пройден';el('status').textContent='Telegram не передал initData';el('warning').textContent='Проверь, что ссылка на GitHub Pages подключена к Menu Button / Web App, а не отправлена обычным сообщением.';
+ }
+ // HTTP fallback intentionally disabled: it cannot safely complete authenticated login.
+}
+el('recheck').addEventListener('click',check);check();
+</script></body></html>
